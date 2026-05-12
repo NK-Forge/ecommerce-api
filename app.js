@@ -2,6 +2,7 @@ require('dotenv').config();
 
 const express = require('express');
 const db = require('./db');
+const authRoutes = require('./routes/auth.routes');
 
 const app = express();
 
@@ -23,16 +24,13 @@ app.get('/health/db', async (req, res) => {
       databaseTime: result.rows[0].now
     });
   } catch (err) {
-    console.error('Database health check failed:', err);
-
     res.status(500).json({
       status: 'error',
-      name: err.name,
-      code: err.code,
-      message: err.message,
-      stack: err.stack
+      message: err.message
     });
   }
 });
+
+app.use('/auth', authRoutes);
 
 module.exports = app;
