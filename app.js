@@ -5,6 +5,7 @@ const db = require('./db');
 const authRoutes = require('./routes/auth.routes');
 const productRoutes = require('./routes/products.routes');
 const userRoutes = require('./routes/users.routes');
+const cartRoutes = require('./routes/cart.routes');
 
 const app = express();
 
@@ -36,5 +37,6 @@ app.get('/health/db', async (req, res) => {
 app.use('/auth', authRoutes);
 app.use('/products', productRoutes);
 app.use('/users', userRoutes);
+app.use('/cart', cartRoutes);
 
 module.exports = app;
