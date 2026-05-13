@@ -112,6 +112,15 @@ export async function createOrder(userId, token) {
   });
 }
 
+export async function createCheckoutSession(userId, token) {
+  return request(`/payments/checkout-session/${userId}`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+}
+
 export async function getUserOrders(userId, token) {
   const data = await request(`/orders/user/${userId}`, {
     headers: {

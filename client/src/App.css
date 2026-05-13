@@ -559,6 +559,11 @@ h2 {
   color: #cbd5e1;
 }
 
+.checkout-success-panel {
+  display: grid;
+  gap: 1rem;
+}
+
 @media (max-width: 860px) {
   .form-panel {
     grid-template-columns: 1fr;

@@ -6,6 +6,7 @@ import ProductsPage from './pages/ProductsPage';
 import ProductDetailsPage from './pages/ProductDetailsPage';
 import CartPage from './pages/CartPage';
 import CheckoutPage from './pages/CheckoutPage';
+import CheckoutSuccessPage from './pages/CheckoutSuccessPage';
 import OrdersPage from './pages/OrdersPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
@@ -71,6 +72,14 @@ function App() {
           element={(
             <ProtectedRoute>
               <CheckoutPage />
+            </ProtectedRoute>
+          )}
+        />
+        <Route
+          path="/checkout/success"
+          element={(
+            <ProtectedRoute>
+              <CheckoutSuccessPage />
             </ProtectedRoute>
           )}
         />

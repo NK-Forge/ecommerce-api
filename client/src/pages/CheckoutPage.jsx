@@ -1,43 +1,27 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { createOrder } from '../api/apiClient';
+import { Link } from 'react-router-dom';
+import { createCheckoutSession } from '../api/apiClient';
 import { useAuth } from '../auth/useAuth';
 
 function CheckoutPage() {
   const { token, user } = useAuth();
-  const navigate = useNavigate();
   const [status, setStatus] = useState('idle');
   const [message, setMessage] = useState('');
 
   const isSubmitting = status === 'submitting';
 
-  async function handleCheckout() {
+  async function handleStripeCheckout() {
     setStatus('submitting');
     setMessage('');
 
     try {
-      const response = await createOrder(user.id, token);
-      const orderId = response.order?.id ?? response.orderId ?? response.id;
+      const response = await createCheckoutSession(user.id, token);
 
-      setStatus('success');
-      setMessage(response.message || 'Order created successfully.');
-
-      if (orderId) {
-        navigate('/orders', {
-          replace: true,
-          state: {
-            message: `Order #${orderId} created successfully.`
-          }
-        });
-        return;
+      if (!response.url) {
+        throw new Error('Stripe checkout URL was not returned.');
       }
 
-      navigate('/orders', {
-        replace: true,
-        state: {
-          message: 'Order created successfully.'
-        }
-      });
+      window.location.assign(response.url);
     } catch (err) {
       setStatus('error');
       setMessage(err.message);
@@ -49,27 +33,31 @@ function CheckoutPage() {
       <section className="panel checkout-panel">
         <div>
           <p className="eyebrow">Checkout</p>
-          <h1>Review and Place Order</h1>
+          <h1>Secure Checkout</h1>
           <p>
-            This checkout step uses the existing backend order endpoint to create an order
-            from your current cart. Payment processing will be added in a later step.
+            This step creates a Stripe Checkout Session from the current server-side cart,
+            then redirects you to Stripe to complete payment.
+          </p>
+          <p>
+            Order fulfillment will be finalized by a backend Stripe webhook in a follow-up step.
           </p>
         </div>
 
         <div className="checkout-card">
-          <p className="eyebrow">Order Action</p>
-          <h2>Create Order</h2>
+          <p className="eyebrow">Payment</p>
+          <h2>Pay with Stripe</h2>
           <p>
-            When you place the order, the API will convert the cart into an order record.
+            Stripe will handle the hosted payment page. Product names, quantities, and prices
+            come from the API cart, not from client-submitted checkout data.
           </p>
 
           <button
             className="primary-button"
             type="button"
-            onClick={handleCheckout}
+            onClick={handleStripeCheckout}
             disabled={isSubmitting}
           >
-            {isSubmitting ? 'Placing Order...' : 'Place Order'}
+            {isSubmitting ? 'Redirecting to Stripe...' : 'Continue to Stripe'}
           </button>
 
           {message && (
