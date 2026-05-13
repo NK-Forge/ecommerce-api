@@ -39,6 +39,28 @@
   color: #38bdf8;
 }
 
+.auth-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.logout-button {
+  min-height: 2.4rem;
+  padding: 0.55rem 0.85rem;
+  border: 1px solid rgba(148, 163, 184, 0.36);
+  border-radius: 999px;
+  background: transparent;
+  color: #f8fafc;
+  cursor: pointer;
+  font-weight: 800;
+}
+
+.logout-button:hover {
+  background: rgba(248, 113, 113, 0.14);
+  color: #fecaca;
+}
+
 .site-nav {
   display: flex;
   flex-wrap: wrap;
@@ -310,5 +332,10 @@ h2 {
   .panel,
   .products-section {
     padding: 1.25rem;
+  }
+
+  .auth-actions {
+    align-items: start;
+    flex-direction: column;
   }
 }

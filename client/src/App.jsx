@@ -8,7 +8,7 @@ import NotFoundPage from './pages/NotFoundPage';
 import './App.css';
 
 function App() {
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated, user, logout } = useAuth();
 
   return (
     <div className="app-shell">
@@ -30,9 +30,15 @@ function App() {
         </nav>
 
         {isAuthenticated && (
-          <p className="auth-status">
-            Signed in as <span>{user?.username || user?.email}</span>
-          </p>
+          <div className="auth-actions">
+            <p className="auth-status">
+              Signed in as <span>{user?.username || user?.email}</span>
+            </p>
+
+            <button className="logout-button" type="button" onClick={logout}>
+              Logout
+            </button>
+          </div>
         )}
       </header>
 
