@@ -2,6 +2,7 @@ const { assert } = require('chai');
 const request = require('supertest');
 
 const app = require('../app');
+const Stripe = require('stripe');
 
 describe('E-Commerce API smoke test', () => {
   const unique = Date.now();
@@ -187,6 +188,123 @@ describe('E-Commerce API smoke test', () => {
     assert.equal(response.status, 200);
     assert.equal(response.body.cart.user_id, userId);
     assert.isArray(response.body.items);
+  });
+
+  it('returns configuration error when Stripe webhook is not configured', async () => {
+    const originalWebhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+
+    try {
+      delete process.env.STRIPE_WEBHOOK_SECRET;
+
+      const response = await request(app)
+        .post('/payments/webhook')
+        .set('Content-Type', 'application/json')
+        .send(JSON.stringify({
+          id: 'evt_missing_secret',
+          object: 'event'
+        }));
+
+      assert.equal(response.status, 503);
+      assert.equal(response.body.message, 'Stripe webhook is not configured');
+    } finally {
+      if (originalWebhookSecret) {
+        process.env.STRIPE_WEBHOOK_SECRET = originalWebhookSecret;
+      }
+    }
+  });
+
+  it('rejects Stripe webhook without a signature', async () => {
+    const originalWebhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+
+    try {
+      process.env.STRIPE_WEBHOOK_SECRET = 'whsec_test_secret';
+
+      const response = await request(app)
+        .post('/payments/webhook')
+        .set('Content-Type', 'application/json')
+        .send(JSON.stringify({
+          id: 'evt_missing_signature',
+          object: 'event'
+        }));
+
+      assert.equal(response.status, 400);
+      assert.equal(response.body.message, 'Stripe signature required');
+    } finally {
+      if (originalWebhookSecret) {
+        process.env.STRIPE_WEBHOOK_SECRET = originalWebhookSecret;
+      } else {
+        delete process.env.STRIPE_WEBHOOK_SECRET;
+      }
+    }
+  });
+
+  it('rejects Stripe webhook with an invalid signature', async () => {
+    const originalWebhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+
+    try {
+      process.env.STRIPE_WEBHOOK_SECRET = 'whsec_test_secret';
+
+      const response = await request(app)
+        .post('/payments/webhook')
+        .set('Content-Type', 'application/json')
+        .set('stripe-signature', 'invalid-signature')
+        .send(JSON.stringify({
+          id: 'evt_invalid_signature',
+          object: 'event'
+        }));
+
+      assert.equal(response.status, 400);
+      assert.equal(response.body.message, 'Invalid Stripe webhook signature');
+    } finally {
+      if (originalWebhookSecret) {
+        process.env.STRIPE_WEBHOOK_SECRET = originalWebhookSecret;
+      } else {
+        delete process.env.STRIPE_WEBHOOK_SECRET;
+      }
+    }
+  });
+
+  it('accepts a valid signed Stripe webhook event', async () => {
+    const originalWebhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+    const webhookSecret = 'whsec_test_secret';
+    const stripe = new Stripe('sk_test_webhook_signature_only');
+
+    const payload = JSON.stringify({
+      id: `evt_${unique}`,
+      object: 'event',
+      type: 'payment_intent.created',
+      data: {
+        object: {
+          id: `pi_${unique}`,
+          object: 'payment_intent'
+        }
+      }
+    });
+
+    const signature = stripe.webhooks.generateTestHeaderString({
+      payload: payload,
+      secret: webhookSecret
+    });
+
+    try {
+      process.env.STRIPE_WEBHOOK_SECRET = webhookSecret;
+
+      const response = await request(app)
+        .post('/payments/webhook')
+        .set('Content-Type', 'application/json')
+        .set('stripe-signature', signature)
+        .send(payload);
+
+      assert.equal(response.status, 200);
+      assert.equal(response.body.message, 'Stripe event received');
+      assert.equal(response.body.type, 'payment_intent.created');
+    } finally {
+      if (originalWebhookSecret) {
+        process.env.STRIPE_WEBHOOK_SECRET = originalWebhookSecret;
+      } else {
+        delete process.env.STRIPE_WEBHOOK_SECRET;
+      }
+    }
   });
 
   it('rejects Stripe checkout session without a token', async () => {

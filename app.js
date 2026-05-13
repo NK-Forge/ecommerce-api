@@ -9,6 +9,7 @@ const userRoutes = require('./routes/users.routes');
 const cartRoutes = require('./routes/cart.routes');
 const orderRoutes = require('./routes/orders.routes');
 const paymentRoutes = require('./routes/payments.routes');
+const paymentWebhookRoutes = require('./routes/paymentWebhooks.routes');
 const swaggerUi = require('swagger-ui-express');
 const YAML = require('yamljs');
 const swaggerDocument = YAML.load('./docs/openapi.yaml');
@@ -21,6 +22,8 @@ app.use(cors({
   origin: clientOrigin,
   credentials: true
 }));
+
+app.use('/payments/webhook', express.raw({ type: 'application/json' }), paymentWebhookRoutes);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
