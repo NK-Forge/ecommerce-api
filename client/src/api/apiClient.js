@@ -24,6 +24,12 @@ export async function getProducts() {
   return data.products || [];
 }
 
+export async function getProduct(productId) {
+  const data = await request(`/products/${productId}`);
+
+  return data.product || data;
+}
+
 export async function registerUser(userData) {
   return request('/auth/register', {
     method: 'POST',

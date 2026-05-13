@@ -139,6 +139,10 @@ function ProductsPage() {
                   </div>
 
                   <div className="product-actions">
+                    <Link className="secondary-link" to={`/products/${product.id}`}>
+                      View Details
+                    </Link>
+
                     {isAuthenticated ? (
                       <button
                         className="primary-button"
