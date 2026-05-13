@@ -45,3 +45,11 @@ export async function getCurrentUser(token) {
     }
   });
 }
+
+export async function getCart(userId, token) {
+  return request(`/cart/${userId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+}

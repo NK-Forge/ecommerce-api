@@ -1,7 +1,9 @@
 import { NavLink, Route, Routes } from 'react-router-dom';
 import { useAuth } from './auth/useAuth';
+import ProtectedRoute from './components/ProtectedRoute';
 import HomePage from './pages/HomePage';
 import ProductsPage from './pages/ProductsPage';
+import CartPage from './pages/CartPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import NotFoundPage from './pages/NotFoundPage';
@@ -20,6 +22,10 @@ function App() {
         <nav className="site-nav" aria-label="Main navigation">
           <NavLink to="/">Home</NavLink>
           <NavLink to="/products">Products</NavLink>
+
+          {isAuthenticated && (
+            <NavLink to="/cart">Cart</NavLink>
+          )}
 
           {!isAuthenticated && (
             <>
@@ -45,6 +51,14 @@ function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/products" element={<ProductsPage />} />
+        <Route
+          path="/cart"
+          element={(
+            <ProtectedRoute>
+              <CartPage />
+            </ProtectedRoute>
+          )}
+        />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="*" element={<NotFoundPage />} />
