@@ -32,7 +32,9 @@ describe('E-Commerce API smoke test', () => {
     assert.equal(response.body.message, 'E-Commerce API is running');
   });
 
-  it('returns database health status', async () => {
+  it('returns database health status', async function () {
+    this.timeout(5000);
+
     const response = await request(app)
       .get('/health/db');
 

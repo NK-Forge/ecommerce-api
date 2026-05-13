@@ -1,6 +1,7 @@
 require('dotenv').config();
 
 const express = require('express');
+const cors = require('cors');
 const db = require('./db');
 const authRoutes = require('./routes/auth.routes');
 const productRoutes = require('./routes/products.routes');
@@ -12,6 +13,13 @@ const YAML = require('yamljs');
 const swaggerDocument = YAML.load('./docs/openapi.yaml');
 
 const app = express();
+
+const clientOrigin = process.env.CLIENT_ORIGIN || 'http://localhost:5173';
+
+app.use(cors({
+  origin: clientOrigin,
+  credentials: true
+}));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
