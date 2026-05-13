@@ -11,8 +11,8 @@ function CheckoutSuccessPage() {
         <h1>Payment Completed</h1>
 
         <p>
-          Stripe returned a successful checkout session. The next backend step is to verify
-          payment with a Stripe webhook and finalize the order server-side.
+          Stripe returned a successful checkout session. The backend webhook is configured
+          to verify completed checkout events and fulfill the order server-side.
         </p>
 
         {sessionId && (
