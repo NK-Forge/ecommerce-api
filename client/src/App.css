@@ -28,6 +28,17 @@
   text-transform: uppercase;
 }
 
+.auth-status {
+  margin: 0;
+  color: #cbd5e1;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.auth-status span {
+  color: #38bdf8;
+}
+
 .site-nav {
   display: flex;
   flex-wrap: wrap;
@@ -289,6 +300,10 @@ h2 {
   .product-meta {
     align-items: start;
     flex-direction: column;
+  }
+
+  .auth-status {
+    width: 100%;
   }
 
   .hero,

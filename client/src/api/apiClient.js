@@ -30,3 +30,18 @@ export async function registerUser(userData) {
     body: JSON.stringify(userData)
   });
 }
+
+export async function loginUser(credentials) {
+  return request('/auth/login', {
+    method: 'POST',
+    body: JSON.stringify(credentials)
+  });
+}
+
+export async function getCurrentUser(token) {
+  return request('/auth/me', {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+}

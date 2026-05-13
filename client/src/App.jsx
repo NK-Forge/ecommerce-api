@@ -1,4 +1,5 @@
 import { NavLink, Route, Routes } from 'react-router-dom';
+import { useAuth } from './auth/useAuth';
 import HomePage from './pages/HomePage';
 import ProductsPage from './pages/ProductsPage';
 import LoginPage from './pages/LoginPage';
@@ -7,6 +8,8 @@ import NotFoundPage from './pages/NotFoundPage';
 import './App.css';
 
 function App() {
+  const { isAuthenticated, user } = useAuth();
+
   return (
     <div className="app-shell">
       <header className="site-header">
@@ -17,9 +20,20 @@ function App() {
         <nav className="site-nav" aria-label="Main navigation">
           <NavLink to="/">Home</NavLink>
           <NavLink to="/products">Products</NavLink>
-          <NavLink to="/login">Login</NavLink>
-          <NavLink to="/register">Register</NavLink>
+
+          {!isAuthenticated && (
+            <>
+              <NavLink to="/login">Login</NavLink>
+              <NavLink to="/register">Register</NavLink>
+            </>
+          )}
         </nav>
+
+        {isAuthenticated && (
+          <p className="auth-status">
+            Signed in as <span>{user?.username || user?.email}</span>
+          </p>
+        )}
       </header>
 
       <Routes>
