@@ -122,6 +122,72 @@ describe('E-Commerce API smoke test', () => {
     assert.equal(response.body.user.email, testUser.email);
   });
 
+  it('returns configuration error when Google OAuth is not configured', async () => {
+    const originalClientId = process.env.GOOGLE_CLIENT_ID;
+    const originalClientSecret = process.env.GOOGLE_CLIENT_SECRET;
+    const originalCallbackUrl = process.env.GOOGLE_CALLBACK_URL;
+
+    try {
+      delete process.env.GOOGLE_CLIENT_ID;
+      delete process.env.GOOGLE_CLIENT_SECRET;
+      delete process.env.GOOGLE_CALLBACK_URL;
+
+      const response = await request(app)
+        .get('/oauth/google');
+
+      assert.equal(response.status, 503);
+      assert.equal(response.body.message, 'Google OAuth is not configured');
+    } finally {
+      if (originalClientId) {
+        process.env.GOOGLE_CLIENT_ID = originalClientId;
+      }
+
+      if (originalClientSecret) {
+        process.env.GOOGLE_CLIENT_SECRET = originalClientSecret;
+      }
+
+      if (originalCallbackUrl) {
+        process.env.GOOGLE_CALLBACK_URL = originalCallbackUrl;
+      }
+    }
+  });
+
+  it('rejects Google OAuth callback without code and state', async () => {
+    const originalClientId = process.env.GOOGLE_CLIENT_ID;
+    const originalClientSecret = process.env.GOOGLE_CLIENT_SECRET;
+    const originalCallbackUrl = process.env.GOOGLE_CALLBACK_URL;
+
+    try {
+      process.env.GOOGLE_CLIENT_ID = 'google-client-id-test';
+      process.env.GOOGLE_CLIENT_SECRET = 'google-client-secret-test';
+      process.env.GOOGLE_CALLBACK_URL = 'http://localhost:4001/oauth/google/callback';
+
+      const response = await request(app)
+        .get('/oauth/google/callback');
+
+      assert.equal(response.status, 400);
+      assert.equal(response.body.message, 'Google OAuth code and state are required');
+    } finally {
+      if (originalClientId) {
+        process.env.GOOGLE_CLIENT_ID = originalClientId;
+      } else {
+        delete process.env.GOOGLE_CLIENT_ID;
+      }
+
+      if (originalClientSecret) {
+        process.env.GOOGLE_CLIENT_SECRET = originalClientSecret;
+      } else {
+        delete process.env.GOOGLE_CLIENT_SECRET;
+      }
+
+      if (originalCallbackUrl) {
+        process.env.GOOGLE_CALLBACK_URL = originalCallbackUrl;
+      } else {
+        delete process.env.GOOGLE_CALLBACK_URL;
+      }
+    }
+  });
+
   it('creates a product', async () => {
     const response = await request(app)
       .post('/products')

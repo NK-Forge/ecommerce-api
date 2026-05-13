@@ -4,6 +4,7 @@ const express = require('express');
 const cors = require('cors');
 const db = require('./db');
 const authRoutes = require('./routes/auth.routes');
+const oauthRoutes = require('./routes/oauth.routes');
 const productRoutes = require('./routes/products.routes');
 const userRoutes = require('./routes/users.routes');
 const cartRoutes = require('./routes/cart.routes');
@@ -53,6 +54,7 @@ app.get('/health/db', async (req, res) => {
 });
 
 app.use('/auth', authRoutes);
+app.use('/oauth', oauthRoutes);
 app.use('/products', productRoutes);
 app.use('/users', userRoutes);
 app.use('/cart', cartRoutes);
