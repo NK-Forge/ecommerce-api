@@ -23,3 +23,10 @@ export async function getProducts() {
 
   return data.products || [];
 }
+
+export async function registerUser(userData) {
+  return request('/auth/register', {
+    method: 'POST',
+    body: JSON.stringify(userData)
+  });
+}
