@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
+import { getGoogleOAuthUrl } from '../api/apiClient';
 import { useAuth } from '../auth/useAuth';
 
 const initialFormState = {
@@ -48,6 +49,10 @@ function LoginPage() {
     }
   }
 
+  function handleGoogleLogin() {
+    window.location.assign(getGoogleOAuthUrl());
+  }
+
   if (isAuthenticated) {
     return <Navigate to="/products" replace />;
   }
@@ -63,39 +68,49 @@ function LoginPage() {
           </p>
         </div>
 
-        <form className="form-card" onSubmit={handleSubmit}>
-          <div className="form-grid">
-            <label htmlFor="email">
-              Email
-              <input
-                id="email"
-                name="email"
-                type="email"
-                value={formData.email}
-                onChange={handleChange}
-                required
-                autoComplete="email"
-              />
-            </label>
+        <div className="form-card">
+          <button className="oauth-button" type="button" onClick={handleGoogleLogin}>
+            Continue with Google
+          </button>
 
-            <label htmlFor="password">
-              Password
-              <input
-                id="password"
-                name="password"
-                type="password"
-                value={formData.password}
-                onChange={handleChange}
-                required
-                minLength="6"
-                autoComplete="current-password"
-              />
-            </label>
+          <div className="form-divider">
+            <span>or</span>
           </div>
 
-          <button className="primary-button" type="submit" disabled={isSubmitting}>
-            {isSubmitting ? 'Logging In...' : 'Login'}
-          </button>
+          <form onSubmit={handleSubmit}>
+            <div className="form-grid">
+              <label htmlFor="email">
+                Email
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
+                  autoComplete="email"
+                />
+              </label>
+
+              <label htmlFor="password">
+                Password
+                <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  required
+                  minLength="6"
+                  autoComplete="current-password"
+                />
+              </label>
+            </div>
+
+            <button className="primary-button" type="submit" disabled={isSubmitting}>
+              {isSubmitting ? 'Logging In...' : 'Login'}
+            </button>
+          </form>
 
           {message && (
             <p className={`form-message ${status === 'error' ? 'error-message' : 'success-message'}`}>
@@ -106,7 +121,7 @@ function LoginPage() {
           <p className="form-helper">
             Need an account? <Link to="/register">Create one here</Link>.
           </p>
-        </form>
+        </div>
       </section>
     </main>
   );

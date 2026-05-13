@@ -253,6 +253,45 @@ h2 {
   font-weight: 800;
 }
 
+.oauth-button {
+  width: 100%;
+  min-height: 2.75rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid rgba(148, 163, 184, 0.36);
+  border-radius: 999px;
+  background: #f8fafc;
+  color: #0f172a;
+  cursor: pointer;
+  font-weight: 900;
+}
+
+.oauth-button:hover {
+  background: #e2e8f0;
+}
+
+.form-divider {
+  position: relative;
+  display: grid;
+  place-items: center;
+  margin: 1.25rem 0;
+  color: #94a3b8;
+  font-weight: 800;
+}
+
+.form-divider::before {
+  position: absolute;
+  width: 100%;
+  height: 1px;
+  background: rgba(148, 163, 184, 0.24);
+  content: "";
+}
+
+.form-divider span {
+  position: relative;
+  padding: 0 0.75rem;
+  background: rgba(30, 41, 59, 0.72);
+}
+
 .section-header {
   display: flex;
   align-items: end;

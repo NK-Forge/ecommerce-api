@@ -7,6 +7,7 @@ import ProductDetailsPage from './pages/ProductDetailsPage';
 import CartPage from './pages/CartPage';
 import CheckoutPage from './pages/CheckoutPage';
 import CheckoutSuccessPage from './pages/CheckoutSuccessPage';
+import OAuthCallbackPage from './pages/OAuthCallbackPage';
 import OrdersPage from './pages/OrdersPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
@@ -59,6 +60,7 @@ function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/products" element={<ProductsPage />} />
         <Route path="/products/:productId" element={<ProductDetailsPage />} />
+        <Route path="/oauth/callback" element={<OAuthCallbackPage />} />
         <Route
           path="/cart"
           element={(

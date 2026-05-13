@@ -24,6 +24,11 @@ function readStoredUser() {
   }
 }
 
+function storeAuthSession(token, user) {
+  window.localStorage.setItem(TOKEN_STORAGE_KEY, token);
+  window.localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(user));
+}
+
 export function AuthProvider({ children }) {
   const [token, setToken] = useState(() => readStoredToken());
   const [user, setUser] = useState(() => readStoredUser());
@@ -31,13 +36,23 @@ export function AuthProvider({ children }) {
   const login = useCallback(async (credentials) => {
     const response = await loginUser(credentials);
 
-    window.localStorage.setItem(TOKEN_STORAGE_KEY, response.token);
-    window.localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(response.user));
+    storeAuthSession(response.token, response.user);
 
     setToken(response.token);
     setUser(response.user);
 
     return response;
+  }, []);
+
+  const completeOAuthLogin = useCallback(async (oauthToken) => {
+    const response = await getCurrentUser(oauthToken);
+
+    storeAuthSession(oauthToken, response.user);
+
+    setToken(oauthToken);
+    setUser(response.user);
+
+    return response.user;
   }, []);
 
   const refreshCurrentUser = useCallback(async () => {
@@ -66,9 +81,10 @@ export function AuthProvider({ children }) {
     user,
     isAuthenticated: Boolean(token),
     login,
+    completeOAuthLogin,
     logout,
     refreshCurrentUser
-  }), [token, user, login, logout, refreshCurrentUser]);
+  }), [token, user, login, completeOAuthLogin, logout, refreshCurrentUser]);
 
   return (
     <AuthContext.Provider value={value}>

@@ -18,6 +18,10 @@ async function request(path, options = {}) {
   return data;
 }
 
+export function getGoogleOAuthUrl() {
+  return `${API_BASE_URL}/oauth/google`;
+}
+
 export async function getProducts() {
   const data = await request('/products');
 

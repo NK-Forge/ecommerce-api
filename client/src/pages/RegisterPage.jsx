@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { registerUser } from '../api/apiClient';
+import { getGoogleOAuthUrl, registerUser } from '../api/apiClient';
 
 const initialFormState = {
   username: '',
@@ -46,6 +46,10 @@ function RegisterPage() {
     }
   }
 
+  function handleGoogleLogin() {
+    window.location.assign(getGoogleOAuthUrl());
+  }
+
   return (
     <main>
       <section className="panel form-panel">
@@ -57,53 +61,63 @@ function RegisterPage() {
           </p>
         </div>
 
-        <form className="form-card" onSubmit={handleSubmit}>
-          <div className="form-grid">
-            <label htmlFor="username">
-              Username
-              <input
-                id="username"
-                name="username"
-                type="text"
-                value={formData.username}
-                onChange={handleChange}
-                required
-                minLength="3"
-                autoComplete="username"
-              />
-            </label>
+        <div className="form-card">
+          <button className="oauth-button" type="button" onClick={handleGoogleLogin}>
+            Continue with Google
+          </button>
 
-            <label htmlFor="email">
-              Email
-              <input
-                id="email"
-                name="email"
-                type="email"
-                value={formData.email}
-                onChange={handleChange}
-                required
-                autoComplete="email"
-              />
-            </label>
-
-            <label htmlFor="password">
-              Password
-              <input
-                id="password"
-                name="password"
-                type="password"
-                value={formData.password}
-                onChange={handleChange}
-                required
-                minLength="6"
-                autoComplete="new-password"
-              />
-            </label>
+          <div className="form-divider">
+            <span>or</span>
           </div>
 
-          <button className="primary-button" type="submit" disabled={isSubmitting}>
-            {isSubmitting ? 'Creating Account...' : 'Create Account'}
-          </button>
+          <form onSubmit={handleSubmit}>
+            <div className="form-grid">
+              <label htmlFor="username">
+                Username
+                <input
+                  id="username"
+                  name="username"
+                  type="text"
+                  value={formData.username}
+                  onChange={handleChange}
+                  required
+                  minLength="3"
+                  autoComplete="username"
+                />
+              </label>
+
+              <label htmlFor="email">
+                Email
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
+                  autoComplete="email"
+                />
+              </label>
+
+              <label htmlFor="password">
+                Password
+                <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  required
+                  minLength="6"
+                  autoComplete="new-password"
+                />
+              </label>
+            </div>
+
+            <button className="primary-button" type="submit" disabled={isSubmitting}>
+              {isSubmitting ? 'Creating Account...' : 'Create Account'}
+            </button>
+          </form>
 
           {message && (
             <p className={`form-message ${status === 'error' ? 'error-message' : 'success-message'}`}>
@@ -120,7 +134,7 @@ function RegisterPage() {
           <p className="form-helper">
             Already have an account? <Link to="/login">Log in here</Link>.
           </p>
-        </form>
+        </div>
       </section>
     </main>
   );
