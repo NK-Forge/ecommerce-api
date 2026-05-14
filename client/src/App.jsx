@@ -46,7 +46,7 @@ function App() {
         {isAuthenticated && (
           <div className="auth-actions">
             <p className="auth-status">
-              Signed in as <span>{user?.username || user?.email}</span>
+              Signed in as <span>{user?.email || user?.username}</span>
             </p>
 
             <button className="logout-button" type="button" onClick={logout}>
